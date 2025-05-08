@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🤖 Chat SQL + Embeddings
 
-## Getting Started
+Este proyecto es un **chat conversacional inteligente** basado en IA, diseñado para responder preguntas en lenguaje natural utilizando dos enfoques principales:
 
-First, run the development server:
+- **Traducción NL → SQL** para acceder directamente a bases de datos.
+- **Búsqueda semántica con embeddings** para extraer respuestas desde una base de conocimiento vectorizada.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Características
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 🧠 **IA híbrida**: Combina generación de SQL y búsqueda semántica.
+- 🛠️ **Modelo propio NL2SQL**: Convierte texto natural en consultas SQL ejecutables sobre la base de datos.
+- 📚 **Sistema de recuperación semántica**: Usa embeddings para encontrar respuestas en textos o documentos externos.
+- 💬 **Interfaz conversacional**: Interactúa de manera intuitiva con lenguaje humano.
+- 🔄 **Contexto dinámico**: Capacidad de seguimiento de contexto entre mensajes.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🧠 ¿Cómo funciona?
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clasificación de intención**: El sistema detecta si la consulta requiere SQL o búsqueda por embeddings.
+2. **Consulta por SQL**:
+   - Se activa un modelo propio NL2SQL.
+   - Se ejecuta la query contra la base de datos y se retorna el resultado.
+3. **Consulta semántica**:
+   - Se generan embeddings a partir del input.
+   - Se realiza una búsqueda vectorial en la base de conocimiento y se responde con base en los documentos más relevantes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧪 Tecnologías utilizadas
 
-## Deploy on Vercel
+- **Next.js** (interfaz web, opcional)
+- **Python + FastAPI** (backend y modelo NL2SQL)
+- **Langchain o similar** (para embeddings y RAG)
+- **OpenAI / Hugging Face** (para embeddings o modelos auxiliares)
+- **PostgreSQL / SQLite** (como motor de base de datos de prueba)
+- **FAISS / Chroma** (para el motor vectorial)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
