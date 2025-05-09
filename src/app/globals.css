@@ -38,8 +38,6 @@
 
 .bg-card {
   background-color: var(--card-bg);
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(50px);
 }
 
 body {
