@@ -4,9 +4,9 @@ import SendMessage from "./components/sendMessage";
 
 export default function Home() {
   return (
-    <div>
+    <div className="">
       <HeaderModels/>
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col h-full justify-center items-center">
         <MessageZone/>
         <SendMessage/>
       </div>

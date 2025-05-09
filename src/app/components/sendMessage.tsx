@@ -38,13 +38,13 @@ export default function SendMessage() {
   }
 
   return (
-    <div className="flex flex-col m-4 p-4 gap-4 w-[50%] rounded-[23px] bg-card shadow-gray-300 shadow-lg">
+    <div className="flex flex-col m-4 p-4 gap-4 w-[90%] md:w-[50%] rounded-[23px] bg-card shadow-gray-300 shadow-lg">
       <TextField />
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2">
           <button
             onClick={()=>setAdd(!add)}
-            className={`p-[2px] px-[6px] border rounded-full transition-all duration-200 cursor-pointer ${
+            className={`w-[32px] h-[32px] border rounded-full transition-all duration-200 cursor-pointer ${
               add
                   ? "bg-blue-300 text-blue-700 border-blue-300"
                   : "bg-transparent text-black border-gray-400"
@@ -57,7 +57,7 @@ export default function SendMessage() {
             <button
                 key={index}
                 onClick={() => toggleButton(boton.tipo)}
-                className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 cursor-pointer ${
+                className={`w-[32px] h-[32px] border rounded-full transition-all duration-200 cursor-pointer ${
                 boton.flag
                     ? "bg-blue-300 text-blue-700 border-blue-300"
                     : "bg-transparent text-black border-gray-400"
@@ -74,7 +74,7 @@ export default function SendMessage() {
         <div>
           <button
             onClick={()=>sendMessageButton()}
-            className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 cursor-pointer ${
+            className={`w-[32px] h-[32px] border rounded-full transition-all duration-200 cursor-pointer ${
               send
                   ? "bg-blue-300 text-blue-700 border-blue-300"
                   : "bg-black text-white border-black"
