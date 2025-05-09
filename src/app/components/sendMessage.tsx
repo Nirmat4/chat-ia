@@ -44,7 +44,7 @@ export default function SendMessage() {
         <div className="flex flex-row gap-2">
           <button
             onClick={()=>setAdd(!add)}
-            className={`p-[2px] px-[6px] border rounded-full transition-all duration-200 ${
+            className={`p-[2px] px-[6px] border rounded-full transition-all duration-200 cursor-pointer ${
               add
                   ? "bg-blue-300 text-blue-700 border-blue-300"
                   : "bg-transparent text-black border-gray-400"
@@ -57,7 +57,7 @@ export default function SendMessage() {
             <button
                 key={index}
                 onClick={() => toggleButton(boton.tipo)}
-                className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 ${
+                className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 cursor-pointer ${
                 boton.flag
                     ? "bg-blue-300 text-blue-700 border-blue-300"
                     : "bg-transparent text-black border-gray-400"
@@ -74,10 +74,10 @@ export default function SendMessage() {
         <div>
           <button
             onClick={()=>sendMessageButton()}
-            className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 ${
+            className={`p-[5px] px-[9px] border rounded-full transition-all duration-200 cursor-pointer ${
               send
                   ? "bg-blue-300 text-blue-700 border-blue-300"
-                  : "bg-transparent text-black border-gray-400"
+                  : "bg-black text-white border-black"
               }`}
             title="Enviar"
           >
