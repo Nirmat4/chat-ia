@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import BubbleChartRoundedIcon from '@mui/icons-material/BubbleChartRounded';
-import RadioButtonCheckedRoundedIcon from '@mui/icons-material/RadioButtonCheckedRounded';
 import ApiRoundedIcon from '@mui/icons-material/ApiRounded';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 export default function HeaderModels(){
     return (
@@ -30,7 +30,7 @@ interface Model {
 
 const models: Model[] = [
     { name: 'DeepSeek-R1', description: 'El especialista en operaciones matemáticas y generación de código fiable.', icon: <BubbleChartRoundedIcon/>},
-    { name: 'Qwen3', description: 'El políglota que domina más de 100 idiomas sin perder coherencia.', icon: <RadioButtonCheckedRoundedIcon/>},
+    { name: 'Qwen3', description: 'El políglota que domina más de 100 idiomas sin perder coherencia.', icon: <AutoAwesomeRoundedIcon/>},
     { name: 'Phi-4', description: 'El experto en resolver problemas complejos con precisión.', icon: <ApiRoundedIcon/>}
 ];
 
@@ -58,7 +58,7 @@ function CustomDropdown() {
     return (
         <div
         ref={containerRef}
-        className={`relative w-[170px] m-2 p-2 rounded-lg hover:bg-card hover:shadow-gray-${open?"100":"300"} ${
+        className={`relative w-[170px] mx-4 m-2 p-2 rounded-lg hover:bg-card hover:shadow-gray-${open?"100":"300"} ${
             open ? 'bg-card' : ''
         }`}
         >
