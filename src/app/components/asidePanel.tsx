@@ -2,7 +2,7 @@ import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AppRegistrationRoundedIcon from '@mui/icons-material/AppRegistrationRounded';
 
-export default function AsidePAnel(){
+export default function AsidePanel(){
     return (
         <div className="bg-card h-full">
             <div className='m-1 p-1 flex flex-row justify-between items-center'>
