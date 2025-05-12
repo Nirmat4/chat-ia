@@ -1,8 +1,11 @@
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AppRegistrationRoundedIcon from '@mui/icons-material/AppRegistrationRounded';
+import { spaces_send } from "@/app/database/spaces";
+
 
 export default function AsidePanel(){
+    const spaces=spaces_send
     return (
         <div className="bg-card h-full">
             <div className='m-1 p-1 flex flex-row justify-between items-center'>
@@ -17,6 +20,13 @@ export default function AsidePanel(){
                         <AppRegistrationRoundedIcon/>
                     </div>
                 </div>
+            </div>
+            <div className='flex flex-col mx-2'>
+                {spaces.map((space, index)=>(
+                    <div key={index} className='hover:bg-card rounded-md flex flex-col p-1 m-0.5 backdrop-blur-md'>
+                        <p className='font-sans'>{space.name}</p>
+                    </div>
+                ))}
             </div>
         </div>
     );
