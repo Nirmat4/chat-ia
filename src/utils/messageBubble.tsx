@@ -2,7 +2,6 @@ import React from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeRaw from 'rehype-raw';
 
 interface Message {
   id: string;
@@ -11,7 +10,7 @@ interface Message {
   date: Date;
 }
 
-export default function MessageBubble({ message }: { message: Message }) {
+export const MemoizedMessageBubble = React.memo(function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
 
   // Definimos componentes de ReactMarkdown con tipo extendido para <think>
@@ -84,4 +83,8 @@ export default function MessageBubble({ message }: { message: Message }) {
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.message.id === nextProps.message.id &&
+         prevProps.message.content === nextProps.message.content &&
+         prevProps.message.role === nextProps.message.role;
+});

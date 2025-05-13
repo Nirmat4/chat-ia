@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useContext } from 'react';
 import { Context } from "@/app/context/context";
 import 'katex/dist/katex.min.css';
-import MessageBubble from '@/utils/messageBubble';
+import { MemoizedMessageBubble } from '@/utils/messageBubble';
 
 export default function MessageZone() {
   const { messages} = useContext(Context);
@@ -27,7 +27,7 @@ export default function MessageZone() {
       ) : (
         <div className="flex-1 flex flex-col w-[90%] xl:w-[70%]">
           {messages.map(message => (
-            <MessageBubble key={message.id} message={message} />
+            <MemoizedMessageBubble key={message.id} message={message} />
           ))}
         </div>
       )}
