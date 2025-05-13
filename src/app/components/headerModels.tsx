@@ -7,7 +7,7 @@ import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 export default function HeaderModels(){
     return (
-        <div className="flex flex-row w-full justify-between items-center">
+        <div className="flex flex-row w-full h-[60px] justify-between items-center">
             <CustomDropdown/>
             <User/>
         </div>

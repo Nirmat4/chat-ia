@@ -6,7 +6,7 @@ import { spaces_send } from "@/app/database/spaces";
 export default function AsidePanel() {
   const spaces = spaces_send;
   return (
-    <div className="bg-card h-full">
+    <div className="w-[260px] bg-card h-full">
       <div className="m-1 p-1 flex flex-row justify-between items-center">
         <div className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center">
           <DashboardRoundedIcon />
@@ -24,7 +24,7 @@ export default function AsidePanel() {
         {spaces.map((space, index) => (
           <div
             key={index}
-            className="hover:bg-card rounded-md flex flex-col p-1 m-0.5 backdrop-blur-md"
+            className="hover:bg-card rounded-md flex flex-col p-1 m-0.5 backdrop-blur-sm"
           >
             <p className="font-sans">{space.name}</p>
           </div>
