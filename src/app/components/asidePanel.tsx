@@ -3,7 +3,7 @@ import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import { Context } from "@/app/context/context";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 
 export default function AsidePanel() {
   const { handleCreateSpace, spaces } = useContext(Context);
@@ -18,7 +18,10 @@ export default function AsidePanel() {
           <div className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center">
             <SearchRoundedIcon />
           </div>
-          <div className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center" onClick={handleCreateSpace}>
+          <div
+            className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center"
+            onClick={handleCreateSpace}
+          >
             <AppRegistrationRoundedIcon />
           </div>
         </div>
