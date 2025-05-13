@@ -1,0 +1,87 @@
+import React from "react";
+import ReactMarkdown, { Components } from "react-markdown";
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
+
+interface Message {
+  id: string;
+  role: string;
+  content: string;
+  date: Date;
+}
+
+export default function MessageBubble({ message }: { message: Message }) {
+  const isUser = message.role === 'user';
+
+  // Definimos componentes de ReactMarkdown con tipo extendido para <think>
+  const mdComponents: Components & { think?: React.FC<any> } = {
+    p: ({ node, ...props }) => <p className="m-0 leading-normal" {...props} />,
+    h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mt-4" {...props} />,
+    h2: ({ node, ...props }) => <h2 className="text-xl font-bold mt-3" {...props} />,
+    h3: ({ node, ...props }) => <h3 className="text-lg font-bold mt-2" {...props} />,
+    ol: ({ node, ...props }) => <ol className="p-1 px-4 list-decimal list-inside" {...props} />,
+    ul: ({ node, ...props }) => <ul className="p-1 px-4 list-disc list-inside" {...props} />,
+    li: ({ node, ...props }) => <li className="my-2" {...props} />,
+    span: ({ node, ...props }) => <span className="m-0" {...props} />,
+    hr: ({ node, ...props }) => <hr className="my-2 mt-4 opacity-20" {...props} />
+  };
+
+  const segments = React.useMemo(() => {
+    const text = message.content;
+    const startTag = '<think>';
+    const endTag = '</think>';
+    const startIdx = text.indexOf(startTag);
+    const endIdx = text.indexOf(endTag);
+    const parts: { type: 'text' | 'think'; content: string }[] = [];
+
+    if (startIdx === -1) {
+      parts.push({ type: 'text', content: text });
+    } else {
+      if (startIdx > 0) {
+        parts.push({ type: 'text', content: text.slice(0, startIdx) });
+      }
+      if (endIdx === -1) {
+        const inner = text.slice(startIdx + startTag.length);
+        parts.push({ type: 'think', content: inner });
+      } else {
+        const inner = text.slice(startIdx + startTag.length, endIdx);
+        parts.push({ type: 'think', content: inner });
+        if (endIdx + endTag.length < text.length) {
+          parts.push({ type: 'text', content: text.slice(endIdx + endTag.length) });
+        }
+      }
+    }
+    return parts;
+  }, [message.content]);
+
+  return (
+    <div className={`flex m-1 items-start justify-${isUser ? 'end' : 'start'}`}>
+      <div className={`p-2 m-2 ${isUser ? 'bg-card backdrop-blur-sm rounded-xl max-w-[80%] justify-end px-4' : ''}`}>
+        {message.role === 'assistant'
+          ? segments.map((seg, idx) =>
+              seg.type === 'think' ? (
+                <div key={idx} className="bg-card p-4 border-l-[#99a1af30] border-l-4 rounded-r-lg mb-2 text-gray-700 backdrop-blur-sm">
+                  {seg.content.split('\n').map((line, i) => (
+                    <p key={i} className="m-0 whitespace-pre-wrap">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <ReactMarkdown
+                  key={idx}
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                  components={mdComponents}
+                >
+                  {seg.content}
+                </ReactMarkdown>
+              )
+            )
+          : <p>{message.content}</p>
+        }
+      </div>
+    </div>
+  );
+};
