@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import FitbitRoundedIcon from '@mui/icons-material/FitbitRounded';
+import Options from "./options";
+import { Context } from '@/app/context/context';
 
 interface Message {
   id: string;
@@ -12,6 +15,7 @@ interface Message {
 
 export const MemoizedMessageBubble = React.memo(function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
+  const { send }=useContext(Context)
 
   // Definimos componentes de ReactMarkdown con tipo extendido para <think>
   const mdComponents: Components & { think?: React.FC<any> } = {
@@ -60,22 +64,30 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
         {message.role === 'assistant'
           ? segments.map((seg, idx) =>
               seg.type === 'think' ? (
-                <div key={idx} className="bg-card p-4 border-l-[#99a1af30] border-l-4 rounded-r-lg mb-2 text-gray-700 backdrop-blur-sm">
-                  {seg.content.split('\n').map((line, i) => (
-                    <p key={i} className="m-0 whitespace-pre-wrap">
-                      {line}
-                    </p>
-                  ))}
+                <div key={idx}>
+                  <div className="bg-card rounded-lg backdrop-blur-sm w-[100px] mb-2 p-1 flex flex-row justify-around items-center">
+                    <FitbitRoundedIcon style={{fontSize: 16}}/>
+                    <p className="font-sans">Thought</p>
+                  </div>
+                  <div className="bg-card p-4 border-l-[#99a1af30] border-l-4 rounded-r-lg mb-2 text-gray-700 backdrop-blur-sm">
+                    {seg.content.split('\n').map((line, i) => (
+                      <p key={i} className="m-0 whitespace-pre-wrap">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               ) : (
-                <ReactMarkdown
-                  key={idx}
-                  remarkPlugins={[remarkMath]}
-                  rehypePlugins={[rehypeKatex]}
-                  components={mdComponents}
-                >
-                  {seg.content}
-                </ReactMarkdown>
+                <div key={idx}>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
+                    components={mdComponents}
+                  >
+                    {seg.content}
+                  </ReactMarkdown>
+                  {send?<></>:<Options/>}
+                </div>
               )
             )
           : <p>{message.content}</p>
