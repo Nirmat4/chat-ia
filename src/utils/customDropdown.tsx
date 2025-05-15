@@ -1,9 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
-import BubbleChartRoundedIcon from "@mui/icons-material/BubbleChartRounded";
-import ApiRoundedIcon from "@mui/icons-material/ApiRounded";
-import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import { Context } from "@/app/context/context";
 
 interface Model {
   name: string;
@@ -11,34 +9,10 @@ interface Model {
   icon: React.ReactNode;
 }
 
-const models: Model[] = [
-  {
-    name: "Qwen3",
-    description:
-      "El políglota que domina más de 100 idiomas sin perder coherencia.",
-    icon: <AutoAwesomeRoundedIcon />,
-  },
-  {
-    name: "DeepSeek-R1",
-    description:
-      "El especialista en operaciones matemáticas y generación de código fiable.",
-    icon: <BubbleChartRoundedIcon />,
-  },
-  {
-    name: "Phi-4",
-    description: "El experto en resolver problemas complejos con precisión.",
-    icon: <ApiRoundedIcon />,
-  },
-];
-
 export default function CustomDropdown() {
-  const [selected, setSelected] = useState<string>(models[0].name);
+  const { selectedModel, models, setSelected } = useContext(Context);
   const [open, setOpen] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const selectedModel: Model | undefined = models.find(
-    (model) => model.name === selected
-  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -49,7 +23,6 @@ export default function CustomDropdown() {
         setOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
