@@ -5,10 +5,16 @@ import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 const style = { fontSize: 20 };
 export default function Options(){
   return (
-    <div className='flex flex-row gap-3 items-center mt-2 opacity-0 hover:opacity-100 transition-opacity duration-150'>
-      <ContentCopyRoundedIcon style={style}/>
-      <ThumbUpAltOutlinedIcon style={style}/>
-      <ThumbDownAltOutlinedIcon style={style}/>
+    <div className='flex flex-row gap-1 items-center mt-2 opacity-0 hover:opacity-100 transition-opacity duration-150'>
+      <div className="p-1 px-2 rounded-lg justify-center items-center hover:bg-card hover:backdrop-blur-sm">
+        <ContentCopyRoundedIcon style={style}/>
+      </div>
+      <div className="p-1 px-2 rounded-lg justify-center items-center hover:bg-card hover:backdrop-blur-sm">
+        <ThumbUpAltOutlinedIcon style={style}/>
+      </div>
+      <div className="p-1 px-2 rounded-lg justify-center items-center hover:bg-card hover:backdrop-blur-sm">
+        <ThumbDownAltOutlinedIcon style={style}/>
+      </div>
     </div>
   )
 }
