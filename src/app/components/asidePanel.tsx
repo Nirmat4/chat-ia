@@ -6,7 +6,7 @@ import { Context } from "@/app/context/context";
 import { useContext } from "react";
 
 export default function AsidePanel() {
-  const { handleCreateSpace, spaces } = useContext(Context);
+  const { handleCreateSpace, spaces, handleChangeChat } = useContext(Context);
 
   return (
     <div className="w-[260px] bg-card h-full">
@@ -27,10 +27,11 @@ export default function AsidePanel() {
         </div>
       </div>
       <div className="flex flex-col mx-2">
-        {spaces.map((space, index) => (
+        {spaces.map((space) => (
           <div
-            key={index}
-            className="hover:bg-card rounded-md flex flex-col p-1 m-0.5 backdrop-blur-sm"
+            key={space}
+            onClick={()=>handleChangeChat(space)}
+            className="hover:bg-card ruounded-md flex flex-col p-1 m-0.5 backdrop-blur-sm"
           >
             <p className="font-sans">{space}</p>
           </div>
