@@ -10,34 +10,26 @@ import {
 import BubbleChartRoundedIcon from "@mui/icons-material/BubbleChartRounded";
 import ApiRoundedIcon from "@mui/icons-material/ApiRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import { useStyleRegistry } from "styled-jsx";
 
 interface AppContextType {
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  response: string;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
-  handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => Promise<void>;
   messages: Message[];
-  responding: boolean;
-  createNewSpace: (userId: string) => Promise<string | null>;
-  spaceId: string | null;
-  setSpaceId: React.Dispatch<React.SetStateAction<string | null>>;
-  getUserSpaces: (userId: string) => Promise<string[]>;
-  handleCreateSpace: () => Promise<void>;
-  spaces: string[];
-  selected: string;
-  selectedModel: Model | undefined;
-  models: Model[];
-  setSelected: React.Dispatch<React.SetStateAction<string>>;
   sql: boolean;
   jql: boolean;
   emb: boolean;
+  send: boolean;
+  spaces: string[];
+  value: string;
+  models: Model[];
+  selectedModel: Model | undefined;
   setSql: React.Dispatch<React.SetStateAction<boolean>>;
   setJql: React.Dispatch<React.SetStateAction<boolean>>;
   setEmb: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelected: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  handleCreateSpace: () => Promise<void>;
   sendMessage: () => Promise<void>;
-  send: boolean;
+  handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => Promise<void>;
 }
 
 interface ContextProviderProps {
@@ -79,8 +71,8 @@ const models: Model[] = [
 export const Context = createContext<AppContextType>({} as AppContextType);
 export function ContextProvider({ children }: ContextProviderProps) {
   const [messages, setMessages] = useState<Message[]>([]);
+
   const [value, setValue] = useState("");
-  const [response, setResponse] = useState("");
   const [responding, setResponding] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [spaceId, setSpaceId] = useState<string | null>(null);
@@ -95,18 +87,9 @@ export function ContextProvider({ children }: ContextProviderProps) {
     (model) => model.name === selected
   );
 
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      const maxHeight = 4 * 24;
-      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
-    }
-  }, [value]);
-
   const sendMessage = async () => {
     if (!value.trim() || responding) return;
-    setSend(true)
+    setSend(true);
     const id_user =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     const id_llm =
@@ -138,12 +121,12 @@ export function ContextProvider({ children }: ContextProviderProps) {
           prev.map((m) => (m.id === id_llm ? { ...m, content: full } : m))
         );
       }
-      setSend(!send)
+      setSend(!send);
     } catch (err) {
       console.error(err);
     } finally {
       setResponding(false);
-      setSend(false)
+      setSend(false);
     }
   };
 
@@ -153,9 +136,6 @@ export function ContextProvider({ children }: ContextProviderProps) {
       void sendMessage();
     }
   };
-
-  useEffect(() => {}, [response]);
-  useEffect(() => {}, [messages]);
 
   const createNewSpace = useCallback(
     async (userId: string): Promise<string | null> => {
@@ -195,14 +175,6 @@ export function ContextProvider({ children }: ContextProviderProps) {
     []
   );
 
-  useEffect(() => {
-    (async () => {
-      const userId = "JOSAFAT";
-      const list = await getUserSpaces(userId);
-      setSpaces(list);
-    })();
-  }, [getUserSpaces]);
-
   const handleCreateSpace = useCallback(async () => {
     const userId = "JOSAFAT";
     const newId = await createNewSpace(userId);
@@ -213,28 +185,28 @@ export function ContextProvider({ children }: ContextProviderProps) {
     }
   }, [createNewSpace, getUserSpaces]);
 
+  useEffect(() => {
+    (async () => {
+      const userId = "JOSAFAT";
+      const list = await getUserSpaces(userId);
+      setSpaces(list);
+    })();
+  }, [getUserSpaces]);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      const maxHeight = 4 * 24;
+      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+    }
+  }, [value]);
+
   return (
     <Context.Provider
       value={
         {
-          value,
-          setValue,
-          response,
-          setResponse,
-          textareaRef,
-          handleKeyDown,
           messages,
-          responding,
-          createNewSpace,
-          spaceId,
-          setSpaceId,
-          getUserSpaces,
-          handleCreateSpace,
-          spaces,
-          selected,
-          selectedModel,
-          models,
-          setSelected,
           jql,
           sql,
           emb,
@@ -242,7 +214,16 @@ export function ContextProvider({ children }: ContextProviderProps) {
           setSql,
           setEmb,
           sendMessage,
-          send
+          send,
+          handleCreateSpace,
+          spaces,
+          selectedModel,
+          models,
+          setSelected,
+          value,
+          textareaRef,
+          handleKeyDown,
+          setValue,
         } as any
       }
     >
