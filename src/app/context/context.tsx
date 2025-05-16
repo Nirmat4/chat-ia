@@ -70,25 +70,25 @@ const models: Model[] = [
 
 export const Context = createContext<AppContextType>({} as AppContextType);
 export function ContextProvider({ children }: ContextProviderProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
 
-  const [value, setValue] = useState("");
-  const [responding, setResponding] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [prompt, setPrompt] = useState("");
+  const [selModel, setSelModel] = useState<string>(models[0].name);
+  const [responding, setResponding] = useState(false);
+  const [send, setSend] = useState(false);
   const [spaceId, setSpaceId] = useState<string | null>(null);
   const [spaces, setSpaces] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string>(models[0].name);
   const [sql, setSql] = useState<boolean>(false);
   const [emb, setEmb] = useState<boolean>(false);
   const [jql, setJql] = useState<boolean>(false);
-  const [send, setSend] = useState(false);
 
   const selectedModel: Model | undefined = models.find(
-    (model) => model.name === selected
+    (model) => model.name === selModel
   );
 
   const sendMessage = async () => {
-    if (!value.trim() || responding) return;
+    if (!prompt.trim() || responding) return;
     setSend(true);
     const id_user =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
@@ -97,17 +97,17 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
     setMessages((prev) => [
       ...prev,
-      { id: id_user, role: "user", content: value, date: new Date() },
+      { id: id_user, role: "user", content: prompt, date: new Date() },
       { id: id_llm, role: "assistant", content: "", date: new Date() },
     ]);
-    setValue("");
+    setPrompt("");
     setResponding(true);
 
     try {
       const resp = await fetch("http://localhost:5000/api/prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: value, model: selected, sql, emb, jql }),
+        body: JSON.stringify({ prompt: prompt, model: selModel, sql, emb, jql }),
       });
       const reader = resp.body!.getReader();
       const dec = new TextDecoder();
@@ -200,7 +200,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
       const maxHeight = 4 * 24;
       textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
     }
-  }, [value]);
+  }, [prompt]);
 
   return (
     <Context.Provider
@@ -219,11 +219,11 @@ export function ContextProvider({ children }: ContextProviderProps) {
           spaces,
           selectedModel,
           models,
-          setSelected,
-          value,
+          setSelected: setSelModel,
+          value: prompt,
           textareaRef,
           handleKeyDown,
-          setValue,
+          setValue: setPrompt,
         } as any
       }
     >
