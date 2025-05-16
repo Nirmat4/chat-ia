@@ -5,6 +5,12 @@ import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRound
 import { Context } from "@/app/context/context";
 import { useContext } from "react";
 
+interface space{
+  id: string
+  name: string
+  date: string
+}
+
 export default function AsidePanel() {
   const { handleCreateSpace, spaces, handleChangeChat } = useContext(Context);
 
@@ -29,11 +35,11 @@ export default function AsidePanel() {
       <div className="flex flex-col mx-2">
         {spaces.map((space) => (
           <div
-            key={space}
-            onClick={()=>handleChangeChat(space)}
+            key={space.id}
+            onClick={()=>handleChangeChat(space.id)}
             className="hover:bg-card ruounded-md flex flex-col p-1 m-0.5 backdrop-blur-sm"
           >
-            <p className="font-sans">{space}</p>
+            <p className="font-sans truncate">{space.name}</p>
           </div>
         ))}
       </div>

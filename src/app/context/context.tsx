@@ -18,7 +18,7 @@ interface AppContextType {
   jql: boolean;
   emb: boolean;
   send: boolean;
-  spaces: string[];
+  spaces: Space[];
   value: string;
   models: Model[];
   selectedModel: Model | undefined;
@@ -44,6 +44,11 @@ interface Message {
   role: string;
   content: string;
   date: Date;
+}
+interface Space{
+  id: string
+  name: string
+  date: string
 }
 
 interface Model {
@@ -80,7 +85,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [responding, setResponding] = useState(false);
   const [send, setSend] = useState(false);
   const [spaceId, setSpaceId] = useState<string | null>(null);
-  const [spaces, setSpaces] = useState<string[]>([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
   const [sql, setSql] = useState<boolean>(false);
   const [emb, setEmb] = useState<boolean>(false);
   const [jql, setJql] = useState<boolean>(false);
@@ -157,7 +162,9 @@ export function ContextProvider({ children }: ContextProviderProps) {
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
-        return data.space_id;
+        console.log(data)
+        handleChangeChat(data.space.id)
+        return data.space.id;
       } catch (err) {
         console.error("Error al crear espacio:", err);
         return null;
@@ -167,7 +174,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
   );
 
   const getUserSpaces = useCallback(
-    async (userId: string): Promise<string[]> => {
+    async (userId: string): Promise<Space[]> => {
       try {
         const res = await fetch("http://localhost:5000/api/get_spaces", {
           method: "POST",
@@ -175,7 +182,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
           body: JSON.stringify({ user_id: userId }),
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
-        const data = await res.json();
+        const data: { spaces: Space[] } = await res.json();
         return data.spaces || [];
       } catch (error) {
         console.error("Error al obtener spaces:", error);
@@ -198,8 +205,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const handleChangeChat= useCallback((chatId: string)=>{
     if (chatId!=chat)
       setChat(chatId)
-      console.log(chat)
-      router.push(`/${chat}`);
+      router.push(`/${chatId}`);
   }, [chat]);
 
   useEffect(() => {
