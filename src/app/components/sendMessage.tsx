@@ -31,7 +31,7 @@ export default function SendMessage() {
   };
 
   return (
-    <div className="flex flex-col m-2 p-4 w-[90%] xl:w-[70%] rounded-[23px] bg-card shadow-gray-300 shadow-lg">
+    <div className="flex flex-col p-4 w-[90%] xl:w-[70%] rounded-[23px] bg-card shadow-gray-300 shadow-lg">
       <TextField />
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2">
