@@ -4,15 +4,10 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import { Context } from "@/app/context/context";
 import { useContext } from "react";
-
-interface space{
-  id: string
-  name: string
-  date: string
-}
+import ChatTime from "@/utils/chatTime";
 
 export default function AsidePanel() {
-  const { handleCreateSpace, spaces, handleChangeChat } = useContext(Context);
+  const { handleCreateSpace } = useContext(Context);
 
   return (
     <div className="w-[260px] bg-card h-full">
@@ -32,17 +27,7 @@ export default function AsidePanel() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col mx-2">
-        {spaces.map((space) => (
-          <div
-            key={space.id}
-            onClick={()=>handleChangeChat(space.id)}
-            className="hover:bg-card ruounded-md flex flex-col p-1 m-0.5 backdrop-blur-sm"
-          >
-            <p className="font-sans truncate">{space.name}</p>
-          </div>
-        ))}
-      </div>
+      <ChatTime/>
     </div>
   );
 }

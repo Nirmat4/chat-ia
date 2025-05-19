@@ -162,7 +162,6 @@ export function ContextProvider({ children }: ContextProviderProps) {
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
-        console.log(data)
         handleChangeChat(data.space.id)
         return data.space.id;
       } catch (err) {
@@ -215,10 +214,6 @@ export function ContextProvider({ children }: ContextProviderProps) {
       setSpaces(list);
     })();
   }, [getUserSpaces]);
-
-  useEffect(()=>{
-    console.log(chat)
-  }, [chat]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
