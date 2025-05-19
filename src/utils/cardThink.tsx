@@ -14,9 +14,11 @@ export default function CardThink({ Seg }: CardThinkProps) {
 
   return (
     <div className="mb-4">
-      <div onClick={() => setOpen((prev) => !prev)} className="bg-card rounded-lg backdrop-blur-sm w-[150px] mb-1 p-1 flex flex-row justify-around items-center">
-        <FitbitRoundedIcon style={{ fontSize: 16 }} />
-        <p className="font-sans">Thought</p>
+      <div onClick={() => setOpen((prev) => !prev)} className={`bg-card rounded-lg ${open?"mb-2":""} backdrop-blur-sm w-[150px] p-1 flex flex-row justify-around items-center`}>
+        <div className="flex flex-row justify-around items-center gap-[6px]">
+          <FitbitRoundedIcon style={{ fontSize: 16 }} />
+          <p className="font-sans">Thought</p>
+        </div>
         {open?<KeyboardArrowUpRoundedIcon style={style}/>:<KeyboardArrowDownRoundedIcon style={style}/>}
       </div>
       {open?(
@@ -27,7 +29,7 @@ export default function CardThink({ Seg }: CardThinkProps) {
             </p>
           ))}
         </div>
-      ):<div className="h-[2px] bg-card backdrop-blur-sm rounded-sm"></div>}
+      ):<></>}
     </div>
   );
 }
