@@ -46,7 +46,7 @@ export default function ChatTime(){
     <div className="flex flex-col mx-2">
       {hoy.length==0?<></>:(
         <div>
-          <p>Esta hoy</p>
+          <p>Hoy</p>
           {hoy.map((space)=>(
             <Card space={space}/>
           ))}
