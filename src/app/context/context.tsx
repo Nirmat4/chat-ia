@@ -10,7 +10,7 @@ import {
 import BubbleChartRoundedIcon from "@mui/icons-material/BubbleChartRounded";
 import ApiRoundedIcon from "@mui/icons-material/ApiRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface AppContextType {
   messages: Message[];
@@ -45,10 +45,10 @@ interface Message {
   content: string;
   date: Date;
 }
-interface Space{
-  id: string
-  name: string
-  date: string
+interface Space {
+  id: string;
+  name: string;
+  date: string;
 }
 
 interface Model {
@@ -89,7 +89,9 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [sql, setSql] = useState<boolean>(false);
   const [emb, setEmb] = useState<boolean>(false);
   const [jql, setJql] = useState<boolean>(false);
-  const [chat, setChat] = useState<string>("e5993e40-3319-4d48-bd77-4cd8245a3342");
+  const [chat, setChat] = useState<string>(
+    "e5993e40-3319-4d48-bd77-4cd8245a3342"
+  );
   const router = useRouter();
 
   const selectedModel: Model | undefined = models.find(
@@ -106,23 +108,40 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
     setMessages((prev) => [
       ...prev,
-      { id: id_user, role: "user", content: prompt, date: new Date() },
-      { id: id_llm, role: "assistant", content: "", date: new Date() },
+      {
+        id: id_user,
+        id_space: chat,
+        role: "user",
+        content: prompt,
+        date: new Date(),
+      },
+      {
+        id: id_llm,
+        id_space: chat,
+        role: "assistant",
+        content: "",
+        date: new Date(),
+      },
     ]);
     setPrompt("");
     setResponding(true);
 
     try {
+      const dataSendJson = {
+        id_message: id_user,
+        id_space: chat,
+        role: "user",
+        prompt: prompt,
+        model: selModel,
+        sql,
+        emb,
+        jql,
+      };
+      console.log(dataSendJson);
       const resp = await fetch("http://localhost:5000/api/prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: prompt,
-          model: selModel,
-          sql,
-          emb,
-          jql,
-        }),
+        body: JSON.stringify(dataSendJson),
       });
       const reader = resp.body!.getReader();
       const dec = new TextDecoder();
@@ -162,7 +181,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
-        handleChangeChat(data.space.id)
+        handleChangeChat(data.space.id);
         return data.space.id;
       } catch (err) {
         console.error("Error al crear espacio:", err);
@@ -201,11 +220,35 @@ export function ContextProvider({ children }: ContextProviderProps) {
     }
   }, [createNewSpace, getUserSpaces]);
 
-  const handleChangeChat= useCallback((chatId: string)=>{
-    if (chatId!=chat)
-      setChat(chatId)
+  const handleGetMessages = useCallback(
+    async (chatId: string): Promise<Message[]> => {
+      try {
+        const res = await fetch("http://localhost:5000/api/get_messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_space: chatId }),
+        });
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const data: { messages: Message[] } = await res.json();
+        return data.messages;
+      } catch (error) {
+        console.error("Error al obtener messages:", error);
+        return [];
+      }
+    },
+    []
+  );
+
+  const handleChangeChat = useCallback(
+    async (chatId: string) => {
+      if (chatId != chat) setChat(chatId);
+      console.log(chatId)
+      const updated = await handleGetMessages(chatId);
+      setMessages(updated);
       router.push(`/${chatId}`);
-  }, [chat]);
+    },
+    [chat, handleGetMessages]
+  );
 
   useEffect(() => {
     (async () => {
@@ -247,7 +290,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
           handleKeyDown,
           setValue: setPrompt,
           chat,
-          handleChangeChat
+          handleChangeChat,
         } as any
       }
     >
