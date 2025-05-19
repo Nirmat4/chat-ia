@@ -20,13 +20,13 @@ export default function MessageZone() {
     }
   }, [messages]);
   return (
-    <div ref={containerRef} className="flex flex-col justify-start items-center m-4 p-4 gap-4 h-[calc(100vh-260px)] w-full overflow-auto scroll-smooth" >
+    <div ref={containerRef} className="flex flex-col justify-start items-center m-4 p-4 gap-4 h-[calc(100vh-260px)] w-full overflow-auto scroll-smooth focus:outline-none">
       {messages.length === 0 ? (
         <div className="flex flex-col justify-center items-center">
           <p className="text-[27px] font-bold">¿Con qué puedo ayudarte?</p>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col w-[90%] xl:w-[70%]">
+        <div className="flex-1 flex flex-col w-[95%] xl:w-[75%]">
           {messages.map((message) => (
             <MemoizedMessageBubble key={message.id} message={message} />
           ))}
