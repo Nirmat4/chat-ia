@@ -18,7 +18,7 @@ interface AppContextType {
   jql: boolean;
   emb: boolean;
   send: boolean;
-  spaces: Space[];
+  chats: Chat[];
   value: string;
   models: Model[];
   selectedModel: Model | undefined;
@@ -28,7 +28,7 @@ interface AppContextType {
   setSelected: React.Dispatch<React.SetStateAction<string>>;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
-  handleCreateSpace: () => Promise<void>;
+  handleCreatechat: () => Promise<void>;
   sendMessage: () => Promise<void>;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => Promise<void>;
   chat: string;
@@ -45,7 +45,7 @@ interface Message {
   content: string;
   date: Date;
 }
-interface Space {
+interface Chat {
   id: string;
   name: string;
   date: string;
@@ -79,20 +79,25 @@ const models: Model[] = [
 export const Context = createContext<AppContextType>({} as AppContextType);
 export function ContextProvider({ children }: ContextProviderProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  
   const [prompt, setPrompt] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [chat, setChat] = useState<string>("auto");
+
   const [selModel, setSelModel] = useState<string>(models[0].name);
   const [responding, setResponding] = useState(false);
   const [send, setSend] = useState(false);
-  const [spaceId, setSpaceId] = useState<string | null>(null);
-  const [spaces, setSpaces] = useState<Space[]>([]);
+
   const [sql, setSql] = useState<boolean>(false);
   const [emb, setEmb] = useState<boolean>(false);
   const [jql, setJql] = useState<boolean>(false);
-  const [chat, setChat] = useState<string>(
-    "e5993e40-3319-4d48-bd77-4cd8245a3342"
-  );
   const router = useRouter();
+
+  useEffect(() => {
+    router.push(`/${chat}`);
+  }, [router]);
 
   const selectedModel: Model | undefined = models.find(
     (model) => model.name === selModel
@@ -100,61 +105,75 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
   const sendMessage = async () => {
     if (!prompt.trim() || responding) return;
-    setSend(true);
-    const id_user =
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-    const id_llm =
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    if (chat === "auto") {
+      const newChat = await handleCreateChat();
+      if (newChat) sendData(newChat);
+    } else {
+      sendData(chat);
+    }
+  };
 
+  const getResponse = async (
+    id_user: string,
+    id_llm: string,
+    id_chat: string
+  ) => {
     setMessages((prev) => [
       ...prev,
       {
         id: id_user,
-        id_space: chat,
+        id_chat: id_chat,
         role: "user",
         content: prompt,
         date: new Date(),
       },
       {
         id: id_llm,
-        id_space: chat,
+        id_chat: id_chat,
         role: "assistant",
         content: "",
         date: new Date(),
       },
     ]);
+    const dataSendJson = {
+      id_message: id_user,
+      id_chat: id_chat,
+      role: "user",
+      prompt: prompt,
+      model: selModel,
+      sql,
+      emb,
+      jql,
+    };
+    const resp = await fetch("http://localhost:5000/api/prompt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dataSendJson),
+    });
+    const reader = resp.body!.getReader();
+    const dec = new TextDecoder();
+    let full = "";
+
+    while (true) {
+      const { done, value: chunk } = await reader.read();
+      if (done) break;
+      full += dec.decode(chunk);
+      setMessages((prev) =>
+        prev.map((m) => (m.id === id_llm ? { ...m, content: full } : m))
+      );
+    }
+  };
+
+  const sendData = async (id_chat: string) => {
+    setSend(true);
+    const id_user =
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    const id_llm =
+      Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     setPrompt("");
     setResponding(true);
-
     try {
-      const dataSendJson = {
-        id_message: id_user,
-        id_space: chat,
-        role: "user",
-        prompt: prompt,
-        model: selModel,
-        sql,
-        emb,
-        jql,
-      };
-      console.log(dataSendJson);
-      const resp = await fetch("http://localhost:5000/api/prompt", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataSendJson),
-      });
-      const reader = resp.body!.getReader();
-      const dec = new TextDecoder();
-      let full = "";
-
-      while (true) {
-        const { done, value: chunk } = await reader.read();
-        if (done) break;
-        full += dec.decode(chunk);
-        setMessages((prev) =>
-          prev.map((m) => (m.id === id_llm ? { ...m, content: full } : m))
-        );
-      }
+      getResponse(id_user, id_llm, id_chat);
       setSend(!send);
     } catch (err) {
       console.error(err);
@@ -171,54 +190,53 @@ export function ContextProvider({ children }: ContextProviderProps) {
     }
   };
 
-  const createNewSpace = useCallback(
+  const createNewChat = useCallback(
     async (userId: string): Promise<string | null> => {
       try {
-        const res = await fetch("http://localhost:5000/api/new_space", {
+        const res = await fetch("http://localhost:5000/api/new_chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user_id: userId }),
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
-        handleChangeChat(data.space.id);
-        return data.space.id;
+        handleChangeChat(data.chat.id);
+        return data.chat.id;
       } catch (err) {
-        console.error("Error al crear espacio:", err);
+        console.error("Error al crear chat:", err);
         return null;
       }
     },
     []
   );
 
-  const getUserSpaces = useCallback(
-    async (userId: string): Promise<Space[]> => {
-      try {
-        const res = await fetch("http://localhost:5000/api/get_spaces", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId }),
-        });
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        const data: { spaces: Space[] } = await res.json();
-        return data.spaces || [];
-      } catch (error) {
-        console.error("Error al obtener spaces:", error);
-        return [];
-      }
-    },
-    []
-  );
-
-  const handleCreateSpace = useCallback(async () => {
-    const userId = "JOSAFAT";
-    const newId = await createNewSpace(userId);
-    if (newId) {
-      setSpaceId(newId);
-      const updated = await getUserSpaces(userId);
-      setSpaces(updated);
+  const getUserChats = useCallback(async (userId: string): Promise<Chat[]> => {
+    try {
+      const res = await fetch("http://localhost:5000/api/get_chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data: { chats: Chat[] } = await res.json();
+      return data.chats || [];
+    } catch (error) {
+      console.error("Error al obtener chats:", error);
+      return [];
     }
-  }, [createNewSpace, getUserSpaces]);
+  }, []);
+
+  const handleCreateChat = useCallback(async (): Promise<string | null> => {
+    const userId = "JOSAFAT";
+    const newId = await createNewChat(userId);
+    if (newId) {
+      setChat(newId);
+      const updated = await getUserChats(userId);
+      setChats(updated);
+      return newId;
+    }
+    return null;
+  }, [createNewChat, getUserChats]);
 
   const handleGetMessages = useCallback(
     async (chatId: string): Promise<Message[]> => {
@@ -226,7 +244,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
         const res = await fetch("http://localhost:5000/api/get_messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id_space: chatId }),
+          body: JSON.stringify({ id_chat: chatId }),
         });
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data: { messages: Message[] } = await res.json();
@@ -241,11 +259,12 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
   const handleChangeChat = useCallback(
     async (chatId: string) => {
-      if (chatId != chat) setChat(chatId);
-      console.log(chatId)
+      if (chatId != chat) {
+        setChat(chatId);
+        router.push(`/${chatId}`);
+      }
       const updated = await handleGetMessages(chatId);
       setMessages(updated);
-      router.push(`/${chatId}`);
     },
     [chat, handleGetMessages]
   );
@@ -253,10 +272,10 @@ export function ContextProvider({ children }: ContextProviderProps) {
   useEffect(() => {
     (async () => {
       const userId = "JOSAFAT";
-      const list = await getUserSpaces(userId);
-      setSpaces(list);
+      const list = await getUserChats(userId);
+      setChats(list);
     })();
-  }, [getUserSpaces]);
+  }, [getUserChats]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -280,8 +299,8 @@ export function ContextProvider({ children }: ContextProviderProps) {
           setEmb,
           sendMessage,
           send,
-          handleCreateSpace,
-          spaces,
+          handleCreateChat,
+          chats: chats,
           selectedModel,
           models,
           setSelected: setSelModel,
