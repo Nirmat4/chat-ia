@@ -48,7 +48,7 @@ export default function ChatTime(){
         <div>
           <p>Hoy</p>
           {hoy.map((space)=>(
-            <Card space={space}/>
+            <Card key={space.id} space={space}/>
           ))}
         </div>
       )}
@@ -56,7 +56,7 @@ export default function ChatTime(){
         <div>
           <p className="mb-0.5 mt-4 font-bold tex-[15px]">Esta semana</p>
           {semana.map((space)=>(
-            <Card space={space}/>
+            <Card key={space.id} space={space}/>
           ))}
         </div>
       )}
@@ -64,7 +64,7 @@ export default function ChatTime(){
         <div>
           <p className="mb-0.5 mt-4 font-bold tex-[15px]">Este mes</p>
           {mes.map((space)=>(
-            <Card space={space}/>
+            <Card key={space.id} space={space}/>
           ))}
         </div>
       )}
@@ -72,7 +72,7 @@ export default function ChatTime(){
         <div>
           <p className="mb-0.5 mt-4 font-bold tex-[15px]">Este año</p>
           {año.map((space)=>(
-            <Card space={space}/>
+            <Card key={space.id} space={space}/>
           ))}
         </div>
       )}
@@ -88,7 +88,6 @@ function Card({ space }: CardProps) {
   const { handleChangeChat, chat } = useContext(Context)
   return (
     <div
-      key={space.id}
       onClick={()=>handleChangeChat(space.id)}
       className={`${chat===space.id?"bg-[#99a1af60]":"hover:bg-card"} rounded-sm flex flex-col p-1 px-2 backdrop-blur-sm m-[1px]`}
     >
