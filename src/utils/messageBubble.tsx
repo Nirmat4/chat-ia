@@ -1,10 +1,11 @@
+"use client";
 import React, { useContext } from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import FitbitRoundedIcon from '@mui/icons-material/FitbitRounded';
 import Options from "./options";
 import { Context } from '@/app/context/context';
+import CardThink from "./cardThink";
 
 interface Message {
   id: string;
@@ -59,24 +60,12 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
   }, [message.content]);
 
   return (
-    <div className={`flex m-1 items-start justify-${isUser ? 'end' : 'start'}`}>
-      <div className={`p-2 m-2 ${isUser ? 'bg-card backdrop-blur-sm rounded-xl max-w-[80%] justify-end px-4' : ''}`}>
+    <div className={`flex items-start justify-${isUser ? 'end' : 'start'}`}>
+      <div className="p-2">
         {message.role === 'assistant'
           ? segments.map((seg, idx) =>
               seg.type === 'think' ? (
-                <div key={idx}>
-                  <div className="bg-card rounded-lg backdrop-blur-sm w-[100px] mb-2 p-1 flex flex-row justify-around items-center">
-                    <FitbitRoundedIcon style={{fontSize: 16}}/>
-                    <p className="font-sans">Thought</p>
-                  </div>
-                  <div className="bg-card p-4 border-l-[#99a1af30] border-l-4 rounded-r-lg mb-2 text-gray-700 backdrop-blur-sm">
-                    {seg.content.split('\n').map((line, i) => (
-                      <p key={i} className="m-0 whitespace-pre-wrap">
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                </div>
+                <CardThink key={idx} Seg={seg.content}/>
               ) : (
                 <div key={idx}>
                   <ReactMarkdown
@@ -90,7 +79,14 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
                 </div>
               )
             )
-          : <p>{message.content}</p>
+          : (
+            <div className="flex flex-col w-full">
+              <div className="bg-card backdrop-blur-sm rounded-xl justify-end p-2 px-4">
+                <p>{message.content}</p>
+              </div>
+              <Options/>
+            </div>
+          )
         }
       </div>
     </div>
