@@ -6,6 +6,7 @@ import { ContextProvider } from "@/app/context/context";
 import "./globals.css";
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+  
   return (
     <html lang="en" className="overflow-hidden">
       <body>
