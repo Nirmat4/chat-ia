@@ -6,7 +6,7 @@ import CachedRoundedIcon from '@mui/icons-material/CachedRounded';
 const style = { fontSize: 17 };
 export default function Options(){
   return (
-    <div className='flex flex-row items-center mt-2 opacity-0 hover:opacity-100 transition-opacity duration-150'>
+    <div className='flex flex-row items-center opacity-0 mt-0.5 hover:opacity-100 transition-opacity duration-150'>
       <div className="p-[2px] px-1 rounded-lg justify-center items-center hover:bg-card hover:backdrop-blur-sm">
         <ContentCopyRoundedIcon style={style}/>
       </div>
