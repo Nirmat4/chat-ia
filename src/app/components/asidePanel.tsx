@@ -7,7 +7,7 @@ import { useContext } from "react";
 import ChatTime from "@/utils/chatTime";
 
 export default function AsidePanel() {
-  const { handleCreatechat } = useContext(Context);
+  const { handleCreateChat } = useContext(Context);
 
   return (
     <div className="w-[260px] bg-card h-full">
@@ -20,8 +20,8 @@ export default function AsidePanel() {
             <SearchRoundedIcon />
           </div>
           <div
+            onClick={async ()=>{await handleCreateChat()}}
             className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center"
-            onClick={handleCreatechat}
           >
             <AppRegistrationRoundedIcon />
           </div>
