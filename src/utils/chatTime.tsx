@@ -1,6 +1,11 @@
 "use client";
 import { Context } from "@/app/context/context";
-import { useContext, useEffect, useState } from "react";
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import AutoFixHighRoundedIcon from '@mui/icons-material/AutoFixHighRounded';
+import IosShareRoundedIcon from '@mui/icons-material/IosShareRounded';
+import UnarchiveOutlinedIcon from '@mui/icons-material/UnarchiveOutlined';
+import { useContext, useEffect, useRef, useState } from "react";
 
 interface Chat{
   id: string
@@ -85,13 +90,58 @@ interface CardProps {
 }
 
 function Card({ chatLocal }: CardProps) {
-  const { handleChangeChat, chat } = useContext(Context)
+  const { handleChangeChat, chat, deleteChat } = useContext(Context)
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen]=useState(false)
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [containerRef]);
   return (
-    <div
-      onClick={()=>handleChangeChat(chatLocal.id)}
-      className={`${chat===chatLocal.id?"bg-[#99a1af60]":"hover:bg-card"} rounded-sm flex flex-col p-1 px-2 backdrop-blur-sm m-[1px]`}
-    >
-      <p className="font-sans truncate text-[15px]">{chatLocal.name}</p>
+    <div ref={containerRef} className="flex flex-col relative">
+      <div className={`f${chat===chatLocal.id&&"bg-card"} ${open&&"bg-card"} hover:bg-card rounded-lg flex flex-row justify-between backdrop-blur-sm my-[1px] w-full`}>
+        <div
+          onClick={()=>handleChangeChat(chatLocal.id)}
+          className={`${chat===chatLocal.id&&"bg-card"} rounded-l-lg w-full p-1 px-2`}
+        >
+          <p className="font-sans truncate text-[15px]">{chatLocal.name}</p>
+        </div>
+        <div onClick={()=>setOpen(!open)} className={`opacity-0 hover:opacity-100 ${chat===chatLocal.id&&"bg-card opacity-100"} ${open&&"opacity-100"} rounded-r-lg p-1 pl-2`}>
+            <div className={`rounded-sm hover:bg-card px-1 ${open&&"bg-card"}`}>
+              <MoreHorizRoundedIcon style={{fontSize: 20, opacity: 70}}/>
+            </div>
+        </div>
+      </div>
+      {open&&(
+        <div className="absolute bg-card p-1 backdrop-blur-sm rounded-lg flex flex-col z-10 -right-[140px] top-full -mt-2">
+          <div className="flex flex-row gap-2 items-center hover:bg-card rounded-sm pr-8 p-1 pl-2">
+            <IosShareRoundedIcon style={{fontSize: 20}}/>
+            <p className="text-[15px] font-sans">Compartir</p>
+          </div>
+          <div className="flex flex-row gap-2 items-center hover:bg-card rounded-sm pr-8 p-1 pl-2">
+            <UnarchiveOutlinedIcon style={{fontSize: 20}}/>
+            <p className="text-[15px] font-sans">Archivar</p>
+          </div>
+          <div className="flex flex-row gap-2 items-center hover:bg-card rounded-sm pr-8 p-1 pl-2">
+            <AutoFixHighRoundedIcon style={{fontSize: 20}}/>
+            <p className="text-[15px] font-sans">Cambiar Nombre</p>
+          </div>
+          <div onClick={()=>{deleteChat(chatLocal.id)}} className="flex flex-row gap-2 items-center hover:bg-[#ffa2a250] rounded-sm pr-8 p-1 pl-2">
+            <DeleteForeverOutlinedIcon style={{fontSize: 20, color: "#fb2c36"}}/>
+            <p className="text-[15px] font-sans text-red-500">Eliminar</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
