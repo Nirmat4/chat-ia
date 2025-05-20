@@ -28,11 +28,13 @@ interface AppContextType {
   setSelected: React.Dispatch<React.SetStateAction<string>>;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
-  handleCreatechat: () => Promise<void>;
+  handleCreateChat: () => Promise<void>;
   sendMessage: () => Promise<void>;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => Promise<void>;
   chat: string;
   handleChangeChat: (chatID: string) => Promise<void>;
+  deleteChat: (chatID: string) => Promise<void>;
+  height: number;
 }
 
 interface ContextProviderProps {
@@ -79,7 +81,8 @@ const models: Model[] = [
 export const Context = createContext<AppContextType>({} as AppContextType);
 export function ContextProvider({ children }: ContextProviderProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+  const [height, setHeight] = useState<number>(0);
+
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -227,15 +230,20 @@ export function ContextProvider({ children }: ContextProviderProps) {
   }, []);
 
   const handleCreateChat = useCallback(async (): Promise<string | null> => {
-    const userId = "JOSAFAT";
-    const newId = await createNewChat(userId);
-    if (newId) {
-      setChat(newId);
-      const updated = await getUserChats(userId);
-      setChats(updated);
-      return newId;
+    try {
+      const userId = "JOSAFAT";
+      const newId = await createNewChat(userId);
+      if (newId) {
+        setChat(newId);
+        const updated = await getUserChats(userId);
+        setChats(updated);
+        return newId;
+      }
+      return null;
+    } catch (err) {
+      console.error("Error en handleCreateChat", err);
+      return null;
     }
-    return null;
   }, [createNewChat, getUserChats]);
 
   const handleGetMessages = useCallback(
@@ -269,6 +277,28 @@ export function ContextProvider({ children }: ContextProviderProps) {
     [chat, handleGetMessages]
   );
 
+  const deleteChat = async (chatId: string) => {
+    const userId = "JOSAFAT";
+    if (chat === chatId){
+      setChat("auto")
+      router.push("/auto")
+      setMessages([]);
+    };
+    try {
+      const res = await fetch("http://localhost:5000/api/delete_chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_chat: chatId, user_id: userId }),
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+
+      const updatedChats = await getUserChats(userId);
+      setChats(updatedChats);
+    } catch (error) {
+      console.error("Error al eliminar chat:", error);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       const userId = "JOSAFAT";
@@ -280,11 +310,19 @@ export function ContextProvider({ children }: ContextProviderProps) {
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
+      // Reset height to auto to correctly recalculate scrollHeight
       textarea.style.height = "auto";
-      const maxHeight = 4 * 24;
-      textarea.style.height = `${Math.min(textarea.scrollHeight, maxHeight)}px`;
+      const lineHeight = 24;
+      const maxLines = 4;
+      const maxHeight = lineHeight * maxLines;
+      // Calculate new height clamped by maxHeight
+      const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+      textarea.style.height = `${newHeight}px`;
+      // Update local state and log
+      setHeight(newHeight);
+      console.log(`Textarea height: ${newHeight}px`);
     }
-  }, [prompt]);
+  }, [prompt, textareaRef]);
 
   return (
     <Context.Provider
@@ -310,6 +348,8 @@ export function ContextProvider({ children }: ContextProviderProps) {
           setValue: setPrompt,
           chat,
           handleChangeChat,
+          deleteChat,
+          height
         } as any
       }
     >
