@@ -61,7 +61,7 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
 
   return (
     <div className={`flex items-start justify-${isUser ? 'end' : 'start'}`}>
-      <div className="p-2">
+      <div>
         {message.role === 'assistant'
           ? segments.map((seg, idx) =>
               seg.type === 'think' ? (
