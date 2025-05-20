@@ -118,7 +118,7 @@ function Card({ chatLocal }: CardProps) {
         </div>
         <div onClick={()=>setOpen(!open)} className={`opacity-0 hover:opacity-100 ${chat===chatLocal.id&&"bg-card opacity-100"} ${open&&"opacity-100"} rounded-r-lg p-1 pl-2`}>
             <div className={`rounded-sm hover:bg-card px-1 ${open&&"bg-card"}`}>
-              <MoreHorizRoundedIcon style={{fontSize: 20, opacity: 70}}/>
+              <MoreHorizRoundedIcon style={{fontSize: 20}} className={`${open?"opacity-70":"opacity-0 hover:opacity-70"} ${chat===chatLocal.id&&"opacity-70"}`}/>
             </div>
         </div>
       </div>
