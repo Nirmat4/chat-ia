@@ -28,7 +28,7 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
     ul: ({ node, ...props }) => <ul className="p-1 px-4 list-disc list-inside" {...props} />,
     li: ({ node, ...props }) => <li className="my-2" {...props} />,
     span: ({ node, ...props }) => <span className="m-0" {...props} />,
-    hr: ({ node, ...props }) => <hr className="my-2 mt-4 opacity-20" {...props} />
+    hr: ({ node, ...props }) => <hr className="my-2 mt-4 opacity-20" {...props} />,
   };
 
   const segments = React.useMemo(() => {
@@ -72,6 +72,7 @@ export const MemoizedMessageBubble = React.memo(function MessageBubble({ message
                     remarkPlugins={[remarkMath]}
                     rehypePlugins={[rehypeKatex]}
                     components={mdComponents}
+                    skipHtml={true}
                   >
                     {seg.content}
                   </ReactMarkdown>
