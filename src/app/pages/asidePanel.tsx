@@ -2,12 +2,12 @@
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
-import { Context } from "@/app/context/context";
 import { useContext } from "react";
 import ChatTime from "@/utils/chatTime";
+import { Context } from "../context/context";
 
 export default function AsidePanel() {
-  const { handleCreateChat } = useContext(Context);
+  const { setDefault } = useContext(Context);
 
   return (
     <div className="bg-card h-screen w-[240px]">
@@ -20,7 +20,7 @@ export default function AsidePanel() {
             <SearchRoundedIcon />
           </div>
           <div
-            onClick={async ()=>{await handleCreateChat()}}
+            onClick={() => setDefault()}
             className="hover:bg-card w-[38px] h-[38px] rounded-[10px] flex flex-col justify-center items-center"
           >
             <AppRegistrationRoundedIcon />

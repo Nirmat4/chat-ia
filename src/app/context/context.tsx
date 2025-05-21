@@ -42,6 +42,7 @@ interface AppContextType {
   tasks: Task[];
   load: boolean;
   currentMessage: string;
+  setDefault: () => Promise<void>;
 }
 
 interface ContextProviderProps {
@@ -163,6 +164,15 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [load, setLoad] = useState<boolean>(false);
   const [currentMessage, setCurrentMessage] = useState<string>("");
 
+  const setDefault = async () => {
+    const userId = "JOSAFAT";
+    setChat("auto");
+    router.push("/auto");
+    setMessages([]);
+    const updatedChats = await getUserChats(userId);
+    setChats(updatedChats);
+  };
+
   useEffect(() => {
     router.push(`/${chat}`);
   }, [router]);
@@ -222,15 +232,15 @@ export function ContextProvider({ children }: ContextProviderProps) {
       jql,
     };
     if (search) {
-      setCurrentMessage(id_llm_message)
-      setLoad(true)
+      setCurrentMessage(id_llm_message);
+      setLoad(true);
     }
     const resp = await fetch("http://localhost:5000/api/prompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataSendJson),
     });
-    setLoad(false)
+    setLoad(false);
     const reader = resp.body!.getReader();
     const dec = new TextDecoder();
     let full = "";
@@ -427,6 +437,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
           tasks,
           load,
           currentMessage,
+          setDefault,
         } as any
       }
     >
