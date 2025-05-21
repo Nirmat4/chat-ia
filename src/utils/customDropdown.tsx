@@ -51,7 +51,7 @@ export default function CustomDropdown() {
       </div>
 
       {open && (
-        <ul className="absolute top-full left-0 w-[340px] mt-2 p-1 rounded-lg bg-card shadow-lg z-10 backdrop-blur-sm">
+        <ul className="absolute top-full left-0 w-[340px] mt-2 p-1 rounded-lg bg-card shadow-lg z-50 backdrop-blur-sm">
           {models.map((model: Model) => (
             <li
               key={model.name}
