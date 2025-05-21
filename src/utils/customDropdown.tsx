@@ -59,16 +59,14 @@ export default function CustomDropdown() {
                 setSelected(model.name);
                 setOpen(false);
               }}
-              className="flex flex-row items-center gap-4 mb-2 last:mb-0 cursor-pointer hover:bg-card rounded-lg p-2"
+              className="flex flex-row justify-around items-center mb-2 last:mb-0 cursor-pointer hover:bg-card rounded-lg p-2"
             >
               <div className="w-[10%]">
-                <div className="flex flex-row justify-center items-center w-[32px] h-[32px] rounded-full bg-card">
-                  {model.icon}
-                </div>
+                {model.icon}
               </div>
               <div className="flex flex-col w-[90%]">
                 <p className="text-[14px] font-semibold">{model.name}</p>
-                <p className="text-[12px] text-gray-500">{model.description}</p>
+                <p className="text-[12px] text-[#36415390]">{model.description}</p>
               </div>
             </li>
           ))}
