@@ -3,9 +3,12 @@ import { MemoizedMessageBubble } from "@/utils/messageBubble";
 import React, { useContext, useEffect, useRef } from "react";
 import { Context } from "@/app/context/context";
 import { useParams } from "next/navigation";
+import DropsCard from "@/components/dropsCard";
+import LavaCard from "@/components/lavaCard";
+
 
 export default function MessageZone() {
-  const { messages, height } = useContext(Context);
+  const { messages, height, models, tasks } = useContext(Context);
   const { id } = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -28,16 +31,32 @@ export default function MessageZone() {
         focus:outline-none
       `}
       style={{
-        /* altura dinámica: viewport menos tu variable `height` */
         height: `calc(100vh - 160px - ${height}px)`,
+        willChange: "background-position",
       }}
     >
       {messages.length === 0 ? (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center w-full">
           <p className="text-[27px] font-bold">¿Con qué puedo ayudarte?</p>
+          <div className="flex flex-col mt-8">
+            <p className="font-bold opacity-70">Examinar Modelos</p>
+            <div className="flex flex-row gap-2 mt-2">
+              {models.map((model, index)=>(
+                <LavaCard key={index} title={model.name} content={model.description} colors={model.colors} movent={model.movent} className="w-60 h-44"/>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col mt-8">
+            <p className="font-bold opacity-70">Tareas</p>
+            <div className="flex flex-row gap-2 mt-2">
+              {tasks.map((model, index)=>(
+                <DropsCard key={index} title={model.name} content={model.description} colors={model.colors} movent={model.movent} icon={model.icon} className="w-52 h-26"/>
+              ))}
+            </div>
+          </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col w-full">
+        <div className="flex-1 flex flex-col w-[90%] xl:w-[60%] lg:w-[70%] 2xl:w-[45%]">
           {messages.map((message) => (
             <MemoizedMessageBubble key={message.id} message={message} />
           ))}
