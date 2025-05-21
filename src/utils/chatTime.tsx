@@ -123,7 +123,7 @@ function Card({ chatLocal }: CardProps) {
         </div>
       </div>
       {open&&(
-        <div className="absolute bg-card p-1 backdrop-blur-sm rounded-lg flex flex-col z-10 -right-[140px] top-full -mt-2">
+        <div className="absolute bg-card p-1 backdrop-blur-sm rounded-lg flex flex-col z-50 -right-[140px] top-full -mt-2">
           <div className="flex flex-row gap-2 items-center hover:bg-card rounded-sm pr-8 p-1 pl-2">
             <IosShareRoundedIcon style={{fontSize: 20}}/>
             <p className="text-[15px] font-sans">Compartir</p>
