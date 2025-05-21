@@ -43,6 +43,7 @@ interface AppContextType {
   load: boolean;
   currentMessage: string;
   setDefault: () => Promise<void>;
+  responding: boolean;
 }
 
 interface ContextProviderProps {
@@ -231,10 +232,10 @@ export function ContextProvider({ children }: ContextProviderProps) {
       emb,
       jql,
     };
-    if (search) {
-      setCurrentMessage(id_llm_message);
-      setLoad(true);
-    }
+    setSend(true);
+    setResponding(true);
+    setCurrentMessage(id_llm_message);
+    if (search) setLoad(true);
     const resp = await fetch("http://localhost:5000/api/prompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -253,24 +254,20 @@ export function ContextProvider({ children }: ContextProviderProps) {
         prev.map((m) => (m.id === id_llm_message ? { ...m, content: full } : m))
       );
     }
+    setSend(false);
+    setResponding(false);
   };
 
   const sendData = async (id_chat: string) => {
-    setSend(true);
     const id_message =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     const id_llm_message =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     setPrompt("");
-    setResponding(true);
     try {
       getResponse(id_message, id_llm_message, id_chat);
-      setSend(!send);
     } catch (err) {
       console.error(err);
-    } finally {
-      setResponding(false);
-      setSend(false);
     }
   };
 
@@ -438,6 +435,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
           load,
           currentMessage,
           setDefault,
+          responding,
         } as any
       }
     >
