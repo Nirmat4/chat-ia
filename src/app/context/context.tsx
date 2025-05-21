@@ -11,10 +11,10 @@ import BubbleChartRoundedIcon from "@mui/icons-material/BubbleChartRounded";
 import ApiRoundedIcon from "@mui/icons-material/ApiRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import { useRouter } from "next/navigation";
-import JoinInnerOutlinedIcon from '@mui/icons-material/JoinInnerOutlined';
-import TextRotationAngleupOutlinedIcon from '@mui/icons-material/TextRotationAngleupOutlined';
-import EmojiObjectsOutlinedIcon from '@mui/icons-material/EmojiObjectsOutlined';
-import FlagCircleOutlinedIcon from '@mui/icons-material/FlagCircleOutlined';
+import JoinInnerOutlinedIcon from "@mui/icons-material/JoinInnerOutlined";
+import TextRotationAngleupOutlinedIcon from "@mui/icons-material/TextRotationAngleupOutlined";
+import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
+import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 
 interface AppContextType {
   messages: Message[];
@@ -40,6 +40,8 @@ interface AppContextType {
   deleteChat: (chatID: string) => Promise<void>;
   height: number;
   tasks: Task[];
+  load: boolean;
+  currentMessage: string;
 }
 
 interface ContextProviderProps {
@@ -58,7 +60,7 @@ interface Chat {
   date: string;
 }
 
-interface Task{
+interface Task {
   name: string;
   description: string;
   colors: string[];
@@ -66,13 +68,37 @@ interface Task{
   icon: React.ReactNode;
 }
 
-const style={color: "#36415395", fontSize: 20}
+const style = { color: "#36415395", fontSize: 20 };
 const tasks: Task[] = [
-  {name: "Busqueda SQL", description: "Va directo al dato, sin rodeos ni dramas.", colors: ["#5900E090", "#0F00E090", "#00C6E090"], movent: "-70 -70 250 250", icon: <JoinInnerOutlinedIcon style={style}/>},
-  {name: "Busca Semantica", description: "Entiende lo que quieres, no solo lo que dices.", colors: ["#01E01190", "#A9E00090", "#00E0A790"], movent: "-100 0 200 200", icon: <TextRotationAngleupOutlinedIcon style={style}/>},
-  {name: "Conexion Jira", description: "Mantiene tus tareas y tus nervios bajo control.", colors: ["#0300E090", "#9701E190", "#DF00E090"], movent: "-50 -50 300 300", icon: <EmojiObjectsOutlinedIcon style={style}/>},
-  {name: "Validaciones", description: "Genera validacions, cumple la ley... en tus reportes.", colors: ["#E03A0090", "#E1860090", "#E0BD0090"], movent: "-100 -30 300 300", icon: <FlagCircleOutlinedIcon style={style}/>},
-]
+  {
+    name: "Busqueda SQL",
+    description: "Va directo al dato, sin rodeos ni dramas.",
+    colors: ["#5900E090", "#0F00E090", "#00C6E090"],
+    movent: "-70 -70 250 250",
+    icon: <JoinInnerOutlinedIcon style={style} />,
+  },
+  {
+    name: "Busca Semantica",
+    description: "Entiende lo que quieres, no solo lo que dices.",
+    colors: ["#01E01190", "#A9E00090", "#00E0A790"],
+    movent: "-100 0 200 200",
+    icon: <TextRotationAngleupOutlinedIcon style={style} />,
+  },
+  {
+    name: "Conexion Jira",
+    description: "Mantiene tus tareas y tus nervios bajo control.",
+    colors: ["#0300E090", "#9701E190", "#DF00E090"],
+    movent: "-50 -50 300 300",
+    icon: <EmojiObjectsOutlinedIcon style={style} />,
+  },
+  {
+    name: "Validaciones",
+    description: "Genera validacions, cumple la ley... en tus reportes.",
+    colors: ["#E03A0090", "#E1860090", "#E0BD0090"],
+    movent: "-100 -30 300 300",
+    icon: <FlagCircleOutlinedIcon style={style} />,
+  },
+];
 
 const movents = {
   a: ["0% 50%", "50% 0%", "100% 50%", "50% 100%", "0% 50%"],
@@ -93,20 +119,23 @@ const models: Model[] = [
     description:
       "El políglota que domina más de 100 idiomas sin perder coherencia.",
     icon: <AutoAwesomeRoundedIcon />,
-    colors: ["#8E00E0", "#A52CDB", "#322CDB"], movent: "a"
+    colors: ["#8E00E0", "#A52CDB", "#322CDB"],
+    movent: "a",
   },
   {
     name: "DeepSeek-R1",
     description:
       "El especialista en operaciones matemáticas y generación de código fiable.",
     icon: <BubbleChartRoundedIcon />,
-    colors: ["#00DAE1", "#2B37E0", "#A700E0"], movent: "b"
+    colors: ["#00DAE1", "#2B37E0", "#A700E0"],
+    movent: "b",
   },
   {
     name: "Phi-4",
     description: "El experto en resolver problemas complejos con precisión.",
     icon: <ApiRoundedIcon />,
-    colors: ["#00A8E0", "#00E0A2", "#E0DE01"], movent: "c"
+    colors: ["#00A8E0", "#00E0A2", "#E0DE01"],
+    movent: "c",
   },
 ];
 
@@ -130,6 +159,10 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [jql, setJql] = useState<boolean>(false);
   const router = useRouter();
 
+  const [search, setSearch] = useState<boolean>(false);
+  const [load, setLoad] = useState<boolean>(false);
+  const [currentMessage, setCurrentMessage] = useState<string>("");
+
   useEffect(() => {
     router.push(`/${chat}`);
   }, [router]);
@@ -148,22 +181,30 @@ export function ContextProvider({ children }: ContextProviderProps) {
     }
   };
 
+  useEffect(() => {
+    if (sql || emb || jql) {
+      setSearch(true);
+    } else {
+      setSearch(false);
+    }
+  }, [sql, jql, emb]);
+
   const getResponse = async (
-    id_user: string,
-    id_llm: string,
+    id_message: string,
+    id_llm_message: string,
     id_chat: string
   ) => {
     setMessages((prev) => [
       ...prev,
       {
-        id: id_user,
+        id: id_message,
         id_chat: id_chat,
         role: "user",
         content: prompt,
         date: new Date(),
       },
       {
-        id: id_llm,
+        id: id_llm_message,
         id_chat: id_chat,
         role: "assistant",
         content: "",
@@ -171,7 +212,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
       },
     ]);
     const dataSendJson = {
-      id_message: id_user,
+      id_message: id_message,
       id_chat: id_chat,
       role: "user",
       prompt: prompt,
@@ -180,11 +221,16 @@ export function ContextProvider({ children }: ContextProviderProps) {
       emb,
       jql,
     };
+    if (search) {
+      setCurrentMessage(id_llm_message)
+      setLoad(true)
+    }
     const resp = await fetch("http://localhost:5000/api/prompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataSendJson),
     });
+    setLoad(false)
     const reader = resp.body!.getReader();
     const dec = new TextDecoder();
     let full = "";
@@ -194,21 +240,21 @@ export function ContextProvider({ children }: ContextProviderProps) {
       if (done) break;
       full += dec.decode(chunk);
       setMessages((prev) =>
-        prev.map((m) => (m.id === id_llm ? { ...m, content: full } : m))
+        prev.map((m) => (m.id === id_llm_message ? { ...m, content: full } : m))
       );
     }
   };
 
   const sendData = async (id_chat: string) => {
     setSend(true);
-    const id_user =
+    const id_message =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-    const id_llm =
+    const id_llm_message =
       Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
     setPrompt("");
     setResponding(true);
     try {
-      getResponse(id_user, id_llm, id_chat);
+      getResponse(id_message, id_llm_message, id_chat);
       setSend(!send);
     } catch (err) {
       console.error(err);
@@ -311,11 +357,11 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
   const deleteChat = async (chatId: string) => {
     const userId = "JOSAFAT";
-    if (chat === chatId){
-      setChat("auto")
-      router.push("/auto")
+    if (chat === chatId) {
+      setChat("auto");
+      router.push("/auto");
       setMessages([]);
-    };
+    }
     try {
       const res = await fetch("http://localhost:5000/api/delete_chat", {
         method: "POST",
@@ -342,17 +388,13 @@ export function ContextProvider({ children }: ContextProviderProps) {
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      // Reset height to auto to correctly recalculate scrollHeight
       textarea.style.height = "auto";
       const lineHeight = 24;
       const maxLines = 4;
       const maxHeight = lineHeight * maxLines;
-      // Calculate new height clamped by maxHeight
       const newHeight = Math.min(textarea.scrollHeight, maxHeight);
       textarea.style.height = `${newHeight}px`;
-      // Update local state and log
       setHeight(newHeight);
-      console.log(`Textarea height: ${newHeight}px`);
     }
   }, [prompt, textareaRef]);
 
@@ -382,7 +424,9 @@ export function ContextProvider({ children }: ContextProviderProps) {
           handleChangeChat,
           deleteChat,
           height,
-          tasks
+          tasks,
+          load,
+          currentMessage,
         } as any
       }
     >
