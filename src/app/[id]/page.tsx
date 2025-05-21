@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import DropsCard from "@/components/dropsCard";
 import LavaCard from "@/components/lavaCard";
 
-
 export default function MessageZone() {
   const { messages, height, models, tasks } = useContext(Context);
   const { id } = useParams();
@@ -25,7 +24,7 @@ export default function MessageZone() {
       className={`
         flex flex-col
         justify-start items-center
-        mb-2 gap-4 w-full
+        mb-4 gap-4 w-full
         min-h-0
         overflow-y-auto scroll-smooth
         focus:outline-none
@@ -41,16 +40,31 @@ export default function MessageZone() {
           <div className="flex flex-col mt-8">
             <p className="font-bold opacity-70">Examinar Modelos</p>
             <div className="flex flex-row gap-2 mt-2">
-              {models.map((model, index)=>(
-                <LavaCard key={index} title={model.name} content={model.description} colors={model.colors} movent={model.movent} className="w-60 h-44"/>
+              {models.map((model, index) => (
+                <LavaCard
+                  key={index}
+                  title={model.name}
+                  content={model.description}
+                  colors={model.colors}
+                  movent={model.movent}
+                  className="w-60 h-44"
+                />
               ))}
             </div>
           </div>
           <div className="flex flex-col mt-8">
             <p className="font-bold opacity-70">Tareas</p>
             <div className="flex flex-row gap-2 mt-2">
-              {tasks.map((model, index)=>(
-                <DropsCard key={index} title={model.name} content={model.description} colors={model.colors} movent={model.movent} icon={model.icon} className="w-52 h-26"/>
+              {tasks.map((model, index) => (
+                <DropsCard
+                  key={index}
+                  title={model.name}
+                  content={model.description}
+                  colors={model.colors}
+                  movent={model.movent}
+                  icon={model.icon}
+                  className="w-52 h-26"
+                />
               ))}
             </div>
           </div>
