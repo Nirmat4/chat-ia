@@ -1,9 +1,9 @@
 "use client";
-import AsidePanel from "./components/asidePanel";
-import HeaderModels from "./components/headerModels";
-import SendMessage from "./components/sendMessage";
+import AsidePanel from "./pages/asidePanel";
+import HeaderModels from "./pages/headerModels";
+import SendMessage from "./pages/sendMessage";
 import { ContextProvider } from "@/app/context/context";
-import "./globals.css";
+import "@/styles/globals.css";
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   
@@ -15,7 +15,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
             <AsidePanel />
             <div className="flex flex-col h-screen w-full justify-start items-center">
               <HeaderModels />
-              <div className="flex flex-col items-center justify-end w-[90%] xl:w-[60%] lg:w-[70%] 2xl:w-[45%]">
+              <div className="flex flex-col items-center justify-end w-full">
                 {children}
                 <SendMessage />
               </div>
