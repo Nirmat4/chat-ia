@@ -87,7 +87,7 @@ export const MemoizedMessageBubble = React.memo(
             ) : (
               segments.map((seg, idx) =>
                 seg.type === "think" ? (
-                  <CardThink key={idx} Seg={seg.content} />
+                  <CardThink key={idx} seg={seg.content} id={message.id}/>
                 ) : (
                   <div key={idx}>
                     <ReactMarkdown
@@ -98,7 +98,7 @@ export const MemoizedMessageBubble = React.memo(
                     >
                       {seg.content}
                     </ReactMarkdown>
-                    {send ? <></> : <Options />}
+                    {send&&currentMessage===message.id ? <></> : <Options />}
                   </div>
                 )
               )
