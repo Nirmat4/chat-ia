@@ -7,7 +7,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import CropSquareRoundedIcon from '@mui/icons-material/CropSquareRounded';
-import { Context } from "../context/context";
+import { Context } from "@/app/context/context";
 
 const style = { fontSize: 17 };
 const initialButtons = [

@@ -4,7 +4,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import { useContext } from "react";
 import ChatTime from "@/utils/chatTime";
-import { Context } from "../context/context";
+import { Context } from "@/app/context/context";
 
 export default function AsidePanel() {
   const { setDefault } = useContext(Context);
