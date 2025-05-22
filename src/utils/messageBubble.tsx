@@ -23,7 +23,7 @@ export const MemoizedMessageBubble = React.memo(
     // Definimos componentes de ReactMarkdown con tipo extendido para <think>
     const mdComponents: Components & { think?: React.FC<any> } = {
       p: ({ node, ...props }) => (
-        <p className="m-0 leading-normal" {...props} />
+        <p className="my-2 leading-normal" {...props} />
       ),
       h1: ({ node, ...props }) => (
         <h1 className="text-2xl font-bold mt-4" {...props} />
@@ -41,7 +41,6 @@ export const MemoizedMessageBubble = React.memo(
         <ul className="p-1 px-4 list-disc list-inside" {...props} />
       ),
       li: ({ node, ...props }) => <li className="my-2" {...props} />,
-      span: ({ node, ...props }) => <span className="m-0" {...props} />,
       hr: ({ node, ...props }) => (
         <hr className="my-2 mt-4 opacity-20" {...props} />
       ),
