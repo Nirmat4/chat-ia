@@ -76,7 +76,7 @@ export default function MessageZone() {
       )}
       <div 
       style={{
-        marginTop: `calc(140px - ${height}px)`,
+        marginTop: `calc(100px + ${height}px)`,
       }}></div>
     </div>
   );

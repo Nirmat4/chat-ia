@@ -22,19 +22,21 @@
   }
 }
 
+/* Oculta solo la barra de scroll (Webkit: Chrome, Safari, Edge Chromium) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: #99a1af30;
-  border-radius: 4px;
+/* Firefox */
+.scrollable {
+  scrollbar-width: none; /* Oculta la barra de desplazamiento */
+  -ms-overflow-style: none; /* IE y Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.scrollable::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge Chromium */
 }
+
 
 .bg-card {
   background-color: var(--card-bg);
