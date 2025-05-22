@@ -23,16 +23,14 @@ export default function MessageZone() {
       ref={containerRef}
       className={`
         flex flex-col
-        justify-start items-center
-        mb-4 gap-4 w-full
+        ${messages.length === 0?"justify-center":"justify-start"} items-center
+        gap-4 w-full
         min-h-0
+        h-full
+        mb-[400px]
         overflow-y-auto scroll-smooth
         focus:outline-none
       `}
-      style={{
-        height: `calc(100vh - 160px - ${height}px)`,
-        willChange: "background-position",
-      }}
     >
       {messages.length === 0 ? (
         <div className="flex flex-col items-center w-full">
@@ -76,6 +74,10 @@ export default function MessageZone() {
           ))}
         </div>
       )}
+      <div 
+      style={{
+        marginTop: `calc(140px - ${height}px)`,
+      }}></div>
     </div>
   );
 }
