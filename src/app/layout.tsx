@@ -15,8 +15,10 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
             <AsidePanel />
             <div className="flex flex-col h-screen w-full justify-start items-center">
               <HeaderModels />
-              <div className="flex flex-col items-center justify-end w-full">
-                {children}
+              <div className="relative w-full h-full flex flex-col justify-end items-center">
+                <div className="absolute w-full h-full">
+                  {children}
+                </div>
                 <SendMessage />
               </div>
             </div>
