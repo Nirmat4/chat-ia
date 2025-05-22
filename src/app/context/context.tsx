@@ -9,12 +9,12 @@ import {
 } from "react";
 import BubbleChartRoundedIcon from "@mui/icons-material/BubbleChartRounded";
 import ApiRoundedIcon from "@mui/icons-material/ApiRounded";
-import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import { useRouter } from "next/navigation";
 import JoinInnerOutlinedIcon from "@mui/icons-material/JoinInnerOutlined";
 import TextRotationAngleupOutlinedIcon from "@mui/icons-material/TextRotationAngleupOutlined";
 import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 interface AppContextType {
   messages: Message[];
@@ -120,7 +120,7 @@ const models: Model[] = [
     name: "Qwen3",
     description:
       "El políglota que domina más de 100 idiomas sin perder coherencia.",
-    icon: <AutoAwesomeRoundedIcon />,
+    icon: <AutoAwesomeRoundedIcon/>,
     colors: ["#8E00E0", "#A52CDB", "#322CDB"],
     movent: "a",
   },
@@ -150,7 +150,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const [chats, setChats] = useState<Chat[]>([]);
-  const [chat, setChat] = useState<string>("auto");
+  const [chat, setChat] = useState<string>("model");
 
   const [selModel, setSelModel] = useState<string>(models[0].name);
   const [responding, setResponding] = useState(false);
@@ -167,16 +167,12 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
   const setDefault = async () => {
     const userId = "JOSAFAT";
-    setChat("auto");
-    router.push("/auto");
+    setChat("model");
+    router.push("/dashboard/model");
     setMessages([]);
     const updatedChats = await getUserChats(userId);
     setChats(updatedChats);
   };
-
-  useEffect(() => {
-    router.push(`/${chat}`);
-  }, [router]);
 
   const selectedModel: Model | undefined = models.find(
     (model) => model.name === selModel
@@ -184,7 +180,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
 
   const sendMessage = async () => {
     if (!prompt.trim() || responding) return;
-    if (chat === "auto") {
+    if (chat === "model") {
       const newChat = await handleCreateChat();
       if (newChat) sendData(newChat);
     } else {
@@ -354,7 +350,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
     async (chatId: string) => {
       if (chatId != chat) {
         setChat(chatId);
-        router.push(`/${chatId}`);
+        router.push(`/dashboard/${chatId}`);
       }
       const updated = await handleGetMessages(chatId);
       setMessages(updated);
@@ -365,8 +361,8 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const deleteChat = async (chatId: string) => {
     const userId = "JOSAFAT";
     if (chat === chatId) {
-      setChat("auto");
-      router.push("/auto");
+      setChat("model");
+      router.push("/dashboard/model");
       setMessages([]);
     }
     try {
@@ -395,7 +391,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto";
+      textarea.style.height = "model";
       const lineHeight = 24;
       const maxLines = 4;
       const maxHeight = lineHeight * maxLines;
