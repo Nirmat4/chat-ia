@@ -1,9 +1,12 @@
 "use client";
+import { Context } from "@/app/context/context";
 import { DropBlob } from "@/components/dropsCard";
 import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
 import LockOpenRoundedIcon from "@mui/icons-material/LockOpenRounded";
+import { useContext } from "react";
 
 export default function FormCard() {
+  const { email, password, setEmail, setPassword, handleLogin } = useContext(Context);
   return (
     <div className="relative flex items-center justify-center">
       <div className="absolute inset-0 left-[70%] -top-[20%]">
@@ -36,7 +39,13 @@ export default function FormCard() {
         <p className="font-bold text-xl text-[#03071290] mb-4">Bienvenido</p>
         <div className="flex flex-row gap-2 p-1 my-1 border-b-2 border-b-[#99a1af20]">
           <AlternateEmailRoundedIcon style={{ color: "#03071290" }} />
-          <input placeholder="email" className="outline-none" type="email" />
+          <input
+            placeholder="email"
+            className="outline-none"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div className="flex flex-row gap-2 p-1 my-1 border-b-2 border-b-[#99a1af20]">
           <LockOpenRoundedIcon style={{ color: "#03071290" }} />
@@ -44,6 +53,8 @@ export default function FormCard() {
             placeholder="password"
             className="outline-none"
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className="mt-8 flex flex-row gap-2">
@@ -55,7 +66,7 @@ export default function FormCard() {
           </button>
           <button
             className="bg-card w-fit p-2 px-4 rounded-4xl"
-            onClick={() => console.log("click")}
+            onClick={() => handleLogin()}
           >
             <p className="text-[#03071290] font-sans">Iniciar Sesion</p>
           </button>
