@@ -13,7 +13,13 @@ export default function MessageZone() {
 
   useEffect(() => {
     const el = containerRef.current;
-    if (el) {
+    if (!el) return;
+
+    const threshold = 100; // px antes del fondo
+    const isNearBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+
+    if (isNearBottom) {
       el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     }
   }, [messages]);
@@ -23,7 +29,9 @@ export default function MessageZone() {
       ref={containerRef}
       className={`
         flex flex-col
-        ${messages.length === 0?"justify-center":"justify-start"} items-center
+        ${
+          messages.length === 0 ? "justify-center" : "justify-start"
+        } items-center
         gap-4 w-full
         min-h-0
         h-full
@@ -74,10 +82,11 @@ export default function MessageZone() {
           ))}
         </div>
       )}
-      <div 
-      style={{
-        marginTop: `calc(100px + ${height}px)`,
-      }}></div>
+      <div
+        style={{
+          marginTop: `calc(100px + ${height}px)`,
+        }}
+      ></div>
     </div>
   );
 }
