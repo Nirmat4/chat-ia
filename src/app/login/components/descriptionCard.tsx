@@ -1,6 +1,5 @@
 "use client";
 import { DropBlob } from "@/components/dropsCard";
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 
 export default function DescripstionCard() {
   return (
@@ -70,12 +69,12 @@ export default function DescripstionCard() {
             <p className="text-[#03071290] font-normal mt-4">
               Preguntas tú, conecto yo, responde la inteligencia.
             </p>
-            <div
+            <button
               className="bg-card w-fit p-2 px-4 rounded-4xl mt-4"
               onClick={() => console.log("click")}
             >
               <p className="text-[#03071290] font-sans">Registrar</p>
-            </div>
+            </button>
           </div>
         </div>
       </div>
