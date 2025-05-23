@@ -14,7 +14,7 @@ import JoinInnerOutlinedIcon from "@mui/icons-material/JoinInnerOutlined";
 import TextRotationAngleupOutlinedIcon from "@mui/icons-material/TextRotationAngleupOutlined";
 import EmojiObjectsOutlinedIcon from "@mui/icons-material/EmojiObjectsOutlined";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 
 interface AppContextType {
   messages: Message[];
@@ -44,6 +44,11 @@ interface AppContextType {
   currentMessage: string;
   setDefault: () => Promise<void>;
   responding: boolean;
+  email: string;
+  password: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  handleLogin: () => Promise<void>;
 }
 
 interface ContextProviderProps {
@@ -120,7 +125,7 @@ const models: Model[] = [
     name: "Qwen3",
     description:
       "El políglota que domina más de 100 idiomas sin perder coherencia.",
-    icon: <AutoAwesomeRoundedIcon/>,
+    icon: <AutoAwesomeRoundedIcon />,
     colors: ["#8E00E0", "#A52CDB", "#322CDB"],
     movent: "a",
   },
@@ -143,6 +148,9 @@ const models: Model[] = [
 
 export const Context = createContext<AppContextType>({} as AppContextType);
 export function ContextProvider({ children }: ContextProviderProps) {
+  const [userId, setUserId] = useState<string>("");
+  const [username, setUserName] = useState<string>("");
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [height, setHeight] = useState<number>(0);
 
@@ -164,6 +172,33 @@ export function ContextProvider({ children }: ContextProviderProps) {
   const [search, setSearch] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const [currentMessage, setCurrentMessage] = useState<string>("");
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleLogin = async () => {
+    const dataSetJson = {
+      email: email,
+      password: password,
+    };
+    try {
+      const resp = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataSetJson),
+      });
+      if (!resp.ok) {
+        const jsonResp = await resp.json();
+        console.log(jsonResp.error)
+      }
+      else {
+        const jsonResp = await resp.json();
+        setUserId(jsonResp.id_user)
+        setUserName(jsonResp.name)
+        setDefault()
+      }
+    } catch {}
+  };
 
   const setDefault = async () => {
     const userId = "JOSAFAT";
@@ -354,6 +389,7 @@ export function ContextProvider({ children }: ContextProviderProps) {
       }
       const updated = await handleGetMessages(chatId);
       setMessages(updated);
+      console.log(userId)
     },
     [chat, handleGetMessages]
   );
@@ -432,6 +468,11 @@ export function ContextProvider({ children }: ContextProviderProps) {
           currentMessage,
           setDefault,
           responding,
+          email,
+          password,
+          setEmail,
+          setPassword,
+          handleLogin,
         } as any
       }
     >
