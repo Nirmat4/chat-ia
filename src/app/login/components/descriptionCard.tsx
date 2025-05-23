@@ -70,7 +70,7 @@ export default function DescripstionCard() {
               Preguntas tú, conecto yo, responde la inteligencia.
             </p>
             <button
-              className="bg-card w-fit p-2 px-4 rounded-4xl mt-4"
+              className="bg-card w-fit p-2 px-4 rounded-4xl mt-8"
               onClick={() => console.log("click")}
             >
               <p className="text-[#03071290] font-sans">Registrar</p>
